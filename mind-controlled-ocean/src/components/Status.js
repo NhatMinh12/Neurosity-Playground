@@ -1,5 +1,6 @@
-// src/components/Status.js
+
 import React, { useState, useEffect } from "react";
+import "../global.css";
 
 const statesLabels = {
   booting: "Starting OS...",
@@ -25,32 +26,17 @@ function getStatusColor(state) {
   return stateColors.offline;
 }
 
-export function Status({ neurosity, info }) {
-  const [status, setStatus] = useState(null);
+export function Status({ status }) {
   const { state, charging, battery, sleepMode } = status || {};
-
-  useEffect(() => {
-    if (!neurosity) {
-      return;
-    }
-
-    const subscription = neurosity.status().subscribe((status) => {
-      setStatus(status);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [neurosity]);
 
   if (!status) {
     return <div>Connecting to device...</div>;
   }
 
   return (
-    <aside>
-      {info ? <h3 className="card-heading">{info.deviceNickname}</h3> : null}
-      <div className="status-item status-state">
+    <div className="status-container">
+      {/* {info ? <h3 className="card-heading">{info.deviceNickname}</h3> : null} */}
+      <div className="status-item ">
         <span
           className="status-indicator"
           style={{ background: getStatusColor(state) }}
@@ -58,22 +44,19 @@ export function Status({ neurosity, info }) {
         {state in statesLabels ? statesLabels[state] : state}
       </div>
       {state !== "offline" ? (
-        <div className="status-item status-battery">
-          <span role="img" aria-label="Electricity Emoji">
-            &#x26A1;
-          </span>
+      <div className="status-item">
           {charging ? " Charging " : " Charged "}
           {battery}%
-        </div>
+      </div>
       ) : null}
       {sleepMode && state !== "offline" ? (
-        <div className="status-item status-sleep-mode">
+        <div className="status-item">
           <span role="img" aria-label="Moon Emoji">
             &#127769;
           </span>
           {" Sleep mode "}
         </div>
       ) : null}
-    </aside>
+      </div>
   );
 }

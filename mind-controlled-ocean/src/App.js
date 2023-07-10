@@ -3,19 +3,34 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import useLocalStorage from "react-use/lib/useLocalStorage";
 import { Login } from "./pages/Login";
 import { Logout } from "./pages/Logout";
+import { Calm } from "./pages/Calm";
 import { Neurosity } from "@neurosity/sdk";
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  setDeviceId,
+  setDevice,
+  setUser,
+  selectDevice,
+  selectUser,
+  selectDeviceId,
+} from './reducers/neurositySlice';
+
+import Header from "./components/Header";
+import './global.css'
 
 export default function App() {
-  const [neurosity, setNeurosity] = useState(null);
-  const [user, setUser] = useState(null);
-  const [deviceId, setDeviceId] = useLocalStorage("deviceId");
+  const neurosity = useSelector(selectDevice);
+  const user = useSelector(selectUser);
+  const deviceId = useSelector(selectDeviceId);
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (deviceId) {
-      const neurosity = new Neurosity({ deviceId });
-      setNeurosity(neurosity);
+      const neurosityInstance = new Neurosity({ deviceId });
+      dispatch(setDevice(neurosityInstance));
     } else {
       setLoading(false);
     }
@@ -26,12 +41,13 @@ export default function App() {
       return;
     }
 
-    const subscription = neurosity.onAuthStateChanged().subscribe((user) => {
-      if (user) {
-        setUser(user);
-      } else {
+    const subscription = neurosity.onAuthStateChanged().subscribe((userFromSub) => {
+      dispatch(setUser(userFromSub));
+
+      if (userFromSub === null) {
         navigate("/");
       }
+
       setLoading(false);
     });
 
@@ -40,25 +56,29 @@ export default function App() {
     };
   }, [neurosity]);
 
-  return (
+  useEffect(() => {
+    if (user) {
+      // navigate("/calm");
+    }
+  }, [user]);
+
+  return (<>
+    <Header />
     <Routes>
-      <Route path="/" element={
-      <Login
-        neurosity={neurosity}
-        user={user}
-        setUser={setUser}
-        setDeviceId={setDeviceId}
-      />} /> 
+      <Route path="/" element={<Login/>} /> 
 
       <Route path="/logout" element={
       <Logout
         neurosity={neurosity}
         resetState={() => {
-          setNeurosity(null);
-          setUser(null);
-          setDeviceId("");
+          dispatch(setDevice(null));
+          dispatch(setUser(null));
+          dispatch(setDeviceId(null));
         }}
-      />}  />
+      />} />
+
+      {/* <Route path="/calm" element={<Calm />} /> */}
     </Routes>
+    </>
   );
 }

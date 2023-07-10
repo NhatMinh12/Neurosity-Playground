@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "@react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import "../global.css";
 import { Status } from "./Status";
-import { Footer } from "./Footer";
+// import { Footer } from "./Footer";
 
 export function Nav({ neurosity }) {
   const [info, setInfo] = useState(null);

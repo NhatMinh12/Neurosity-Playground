@@ -1,12 +1,24 @@
 
 import React, { useState, useEffect } from "react";
 import { LoginForm } from "../components/LoginForm";
+import "./Login.css";
 
-export function Login({ neurosity, user, setUser, setDeviceId }) {
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  setDeviceId,
+  selectDevice,
+  selectUser,
+} from '../reducers/neurositySlice';
+
+export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const neurosity = useSelector(selectDevice);
+  const user = useSelector(selectUser);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!user && neurosity && email && password) {
@@ -16,27 +28,27 @@ export function Login({ neurosity, user, setUser, setDeviceId }) {
     async function login() {
         setIsLoggingIn(true);
         const auth = await neurosity.login({ email, password }).catch((error) => {
-        setError(error.message);
+          setError(error.message);
         });
 
-        if (auth) {
-        setUser(auth.user);
-        }
+        // if (auth) {
+        //   setUser(auth.user);
+        // }
 
         setIsLoggingIn(false);
     }
-  }, [email, password, neurosity, user, setUser, setError]);
+  }, [email, password, neurosity, user, setError]);
 
   function onLogin({ email, password, deviceId }) {
     if (email && password && deviceId) {
       setError("");
       setEmail(email);
       setPassword(password);
-      setDeviceId(deviceId);
+      dispatch(setDeviceId(deviceId));
     } else {
       setError("Please fill the form");
     }
   }
 
-  return <LoginForm onLogin={onLogin} loading={isLoggingIn} error={error} />;
+  return (<div className="main"><LoginForm onLogin={onLogin} loading={isLoggingIn} error={error} /></div>);
 }
