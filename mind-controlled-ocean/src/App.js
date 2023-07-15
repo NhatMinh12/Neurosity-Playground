@@ -4,6 +4,7 @@ import useLocalStorage from "react-use/lib/useLocalStorage";
 import { Login } from "./pages/Login";
 import { Logout } from "./pages/Logout";
 import { Calm } from "./pages/Calm";
+import { Dashboard } from "./pages/Dashboard";
 import { Neurosity } from "@neurosity/sdk";
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -58,9 +59,21 @@ export default function App() {
 
   useEffect(() => {
     if (user) {
-      // navigate("/calm");
+      navigate("/home");
     }
   }, [user]);
+
+  // useEffect(() => {    
+  //   if (user && neurosity){
+  //     const brainwaveSub = neurosity.brainwaves("raw").subscribe((brainwaves) => {
+  //         console.log(brainwaves);
+  //     })
+
+  //     return () => { brainwaveSub.unsubscribe() }
+  //   }
+     
+  //   },[user])
+
 
   return (<>
     <Header />
@@ -77,7 +90,7 @@ export default function App() {
         }}
       />} />
 
-      {/* <Route path="/calm" element={<Calm />} /> */}
+      <Route path="/home" element={<Dashboard />} />
     </Routes>
     </>
   );
