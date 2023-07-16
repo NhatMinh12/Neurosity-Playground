@@ -7,9 +7,9 @@ export function Logout({ neurosity, resetState }) {
         if (neurosity) {
         neurosity.logout().then(() => {
             resetState();
-            navigate("/");
         });
         }
+        navigate("/");
     }, [neurosity, resetState]);
 
   return null;
