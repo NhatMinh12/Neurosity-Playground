@@ -42,7 +42,7 @@ export default function App() {
       return;
     }
 
-    const subscription = neurosity.onAuthStateChanged().subscribe((userFromSub) => {
+    const authSubscription = neurosity.onAuthStateChanged().subscribe((userFromSub) => {
       dispatch(setUser(userFromSub));
 
       if (userFromSub === null) {
@@ -53,7 +53,7 @@ export default function App() {
     });
 
     return () => {
-      subscription.unsubscribe();
+      authSubscription.unsubscribe();
     };
   }, [neurosity]);
 

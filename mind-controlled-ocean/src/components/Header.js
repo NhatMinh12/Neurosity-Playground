@@ -20,6 +20,8 @@ function Header () {
     const user = useSelector(selectUser);
     const status = useSelector(selectStatus)
 
+    const [signalQuality, setSignalQuality] = useState();
+
     useEffect(() => {
         if (!user || !neurosity) {
             return;
@@ -34,16 +36,36 @@ function Header () {
         };
     }, [user, neurosity]);
 
+    useEffect(() => {
+        if(!status || !neurosity || status.state !== "online"){
+            return;
+        }
+        const signalQualitySubscription = neurosity.signalQuality().subscribe((signal) => {
+            setSignalQuality(signal);
+            console.log(signal);
+        });
+        return () => {
+            signalQualitySubscription.unsubscribe();
+        };
+    }, [status])
+
     return (
         <div className="headerContainer">
-            <Status status={status} />
-            <p>Imagine Software Neurosity Webapp</p>
-            <button onClick={() => navigate("/")}>
-                Login
-            </button>
-            <button onClick={() => navigate("/logout")}>
-                Logout
-            </button>
+            <div style={{display: "flex", flexDirection: "row"}}>
+                <Status status={status} />
+                <p>Imagine Software Neurosity Webapp</p>
+                <button onClick={() => navigate("/")}>
+                    Login
+                </button>
+                <button onClick={() => navigate("/logout")}>
+                    Logout
+                </button>
+            </div>
+            {
+                (signalQuality)?signalQuality.map(function(val, i){
+                    return (<>Ch {i + 1}: {val['status']} </>)
+                }):<></>
+            }
         </div>
     )
 }

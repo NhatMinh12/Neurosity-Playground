@@ -15,8 +15,8 @@ export function Dashboard() {
         if (getThatShit && neurosity)
         {
             const brainwaveSub = neurosity.brainwaves("raw").subscribe((brainwaves) => {
-                setBrainData(brainData);
-                console.log(brainData);
+                setBrainData(brainwaves);
+                console.log(brainwaves);
             })
 
             return () => { brainwaveSub.unsubscribe() }
