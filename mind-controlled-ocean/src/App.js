@@ -11,6 +11,7 @@ import {
   setDeviceId,
   setDevice,
   setUser,
+  setStatus,
   selectDevice,
   selectUser,
   selectDeviceId,
@@ -87,6 +88,7 @@ export default function App() {
           dispatch(setDevice(null));
           dispatch(setUser(null));
           dispatch(setDeviceId(null));
+          dispatch(setStatus(null));
         }}
       />} />
 
