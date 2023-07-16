@@ -7,8 +7,15 @@ import {
 import { CSVLink } from "react-csv";
 
 export function Dashboard() {
-    const [brainData, setBrainData] = useState([['CH1','CH1','CH1','CH1','CH1','CH1','CH1','CH1']]);
+    const headers = [
+      'CP3', 'C3',
+      'F5',  'PO3',
+      'PO4', 'F6',
+      'C4',  'CP4'
+    ];
+    const [brainData, setBrainData] = useState([headers]);
     const [getThatShit, setGetThatShit] = useState(false);
+    const [makeCSVAppear, setmakeCSVAppear] = useState(false);
 
     const neurosity = useSelector(selectDevice);
 
@@ -21,9 +28,10 @@ export function Dashboard() {
     }
 
     useEffect(() => {
+        let brainwaveSub = null;
         if (getThatShit && neurosity)
         {
-            const brainwaveSub = neurosity.brainwaves("raw").subscribe((brainwaves) => {
+            brainwaveSub = neurosity.brainwaves("raw").subscribe((brainwaves) => {
                 const currentSample = brainData;
                 for (let i = 0; i<16; i++) {
                     currentSample.push(reformatDimension(brainwaves,i));
@@ -31,19 +39,28 @@ export function Dashboard() {
                 setBrainData(currentSample);
                 console.log(brainData);
             })
-            return () => { brainwaveSub.unsubscribe() }
         }
-        else {
-            setBrainData([]);
-        }
+        if (brainwaveSub) return () => { brainwaveSub.unsubscribe() }
     },[getThatShit])
 
     
 
-    return (<><button onClick={() => setGetThatShit(!getThatShit)}>Get Brain data</button><CSVLink
+    return (<>
+    <button onClick={() => setGetThatShit(!getThatShit)}>
+        Get Brain data
+    </button>
+    { makeCSVAppear && <CSVLink
         data={brainData}
         filename={"brainFile.csv"}
+        onClick={() => {console.log("This is what bd is:",brainData)}}
         >
         Download me
-        </CSVLink></>)
+    </CSVLink>}
+    <button onClick={() => setBrainData([headers])}>
+        Clear Brain Data
+    </button>
+    <button onClick={() => setmakeCSVAppear(!makeCSVAppear)}>
+        Allow CSV Download
+    </button>
+    </>)
 }
